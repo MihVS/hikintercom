@@ -1,0 +1,11 @@
+{
+  "domain": "zont_ha",
+  "name": "ZONT",
+  "documentation": "https://github.com/mihvs/hikintercom",
+  "codeowners": ["@mihvs"],
+  "config_flow": true,
+  "integration_type": "hub",
+  "dependencies": ["http", "zeroconf"],
+  "requirements": [],
+  "version": "0.0.0"
+}

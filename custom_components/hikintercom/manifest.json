@@ -1,6 +1,6 @@
 {
-  "domain": "zont_ha",
-  "name": "ZONT",
+  "domain": "hikintercom",
+  "name": "HikIntercom",
   "documentation": "https://github.com/mihvs/hikintercom",
   "codeowners": ["@mihvs"],
   "config_flow": true,

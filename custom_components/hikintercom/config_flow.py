@@ -1,22 +1,40 @@
 import logging
 from http import HTTPStatus
 
+import aiohttp
 import voluptuous as vol
 
 from homeassistant import config_entries
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
-from .const import DOMAIN
+from .const import DOMAIN, HTTP_URL, URL_GET_INFO
+from .core.exceptions import InvalidAuth, InvalidIP
 
 _LOGGER = logging.getLogger(__name__)
 
 
 async def validate_auth(
-        hass: HomeAssistant, login: str, password: str
+        hass: HomeAssistant, ip: str, login: str, password: str
 ) -> None:
     """Валидация авторизации"""
 
-    pass
+    session = async_get_clientsession(hass)
+    response = await session.get(
+        url=HTTP_URL + ip + URL_GET_INFO,
+        auth=aiohttp.BasicAuth(login, password)
+    )
+    text = await response.text()
+    _LOGGER.debug(text)
+    status_code = response.status
+    _LOGGER.info(status_code)
+    if status_code == HTTPStatus.UNAUTHORIZED:
+        error = "Неверный логин или пароль."
+        hass.data['error'] = error
+        raise InvalidAuth(error)
+    elif status_code == HTTPStatus.NOT_FOUND:
+        error = "Неверный ip адрес"
+        hass.data['error'] = error
+        raise InvalidIP(error)
 
 
 class HikConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
@@ -27,16 +45,20 @@ class HikConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         errors: dict[str, str] = {}
         if user_input is not None:
             try:
-                validate_mail(user_input['mail'])
+                await validate_auth(
+                    self.hass,
+                    user_input['ip'],
+                    user_input['login'],
+                    user_input['password']
+                )
                 if not errors:
                     self.data = user_input
-                if user_input.get('get_token', False):
-                    return await self.async_step_auth_pswd()
-                else:
-                    return await self.async_step_auth_token()
-            except InvalidMail:
-                _LOGGER.error(f"{user_input['mail']} - неверный формат")
-                errors['base'] = 'invalid_mail'
+            except InvalidAuth:
+                _LOGGER.error("Не правильный логин или пароль")
+                errors['base'] = 'invalid_auth'
+            except InvalidIP:
+                _LOGGER.error("Не правильный IP адрес")
+                errors['base'] = 'invalid_ip'
             except Exception as e:
                 _LOGGER.error(f'Что-то пошло не так, неизвестная ошибка. {e}')
                 errors["base"] = "unknown"
@@ -44,71 +66,9 @@ class HikConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             step_id="user",
             data_schema=vol.Schema(
                 {
-                    vol.Required(schema="name"): str,
-                    vol.Required(schema="mail"): str,
-                    vol.Optional(schema="get_token"): bool
-                }
-            ),
-            errors=errors
-        )
-
-    async def async_step_auth_pswd(self, user_input=None):
-        errors: dict[str, str] = {}
-        if user_input is not None:
-            try:
-                token = await get_token(
-                    self.hass,
-                    self.data['mail'],
-                    user_input['login'],
-                    user_input['password']
-                )
-                if not errors:
-                    self.data['token'] = token
-                return await self.async_step_auth_token()
-            except RequestAPIZONTError:
-                _LOGGER.error(self.hass.data['error'])
-                errors['base'] = 'invalid_auth'
-            except Exception as e:
-                _LOGGER.error(f'Что-то пошло не так, неизвестная ошибка. {e}')
-                errors["base"] = "unknown"
-        return self.async_show_form(
-            step_id="auth_pswd",
-            data_schema=vol.Schema(
-                {
-                    vol.Required("login"): str,
-                    vol.Required("password"): str
-                }
-            ),
-            errors=errors
-        )
-
-    async def async_step_auth_token(self, user_input=None):
-        errors: dict[str, str] = {}
-        if user_input is not None:
-            try:
-                await validate_auth_token(
-                    self.hass,
-                    self.data['mail'],
-                    user_input['token']
-                )
-                if not errors:
-                    self.data.update(user_input)
-                return self.async_create_entry(
-                    title=self.data['name'], data=self.data
-                )
-            except RequestAPIZONTError:
-                _LOGGER.error(self.hass.data['error'])
-                errors['base'] = 'invalid_auth'
-            except Exception as e:
-                _LOGGER.error(f'Что-то пошло не так, неизвестная ошибка. {e}')
-                errors["base"] = "unknown"
-        return self.async_show_form(
-            step_id="auth_token",
-            data_schema=vol.Schema(
-                {
-                    vol.Required(
-                        schema="token", default=self.data.get('token', None)
-                    ): str
+                    vol.Required(schema="ip"): str,
+                    vol.Required(schema="login"): str,
+                    vol.Required(schema="password"): str
                 }
             ),
             errors=errors

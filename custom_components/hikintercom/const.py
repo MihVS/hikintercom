@@ -17,3 +17,7 @@ TIME_OUT_REPEAT = 10
 TIME_OUT_REQUEST = 2
 TIME_UPDATE = 10
 
+PLATFORMS = [
+    'sensor',
+    'button'
+]

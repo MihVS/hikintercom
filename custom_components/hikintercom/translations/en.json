@@ -1,31 +1,18 @@
 {
-  "title": "MicroLine",
+  "title": "Hikkvision",
   "config": {
     "error": {
       "invalid_auth": "Ошибка авторизации",
-      "invalid_mail": "Неверный формат почты",
+      "invalid_ip": "Неверный IP адрес",
       "unknown": "Неизвестная ошибка"
     },
     "step": {
       "user": {
-        "title": "Конфигурация контроллера zont",
+        "title": "Авторизация",
         "data": {
-          "name": "Название",
-          "mail": "mail",
-          "get_token": "Получить токен"
-        }
-      },
-      "auth_pswd": {
-        "title": "Получить токен",
-        "data": {
+          "ip": "IP адрес",
           "login": "Логин",
           "password": "Пароль"
-        }
-      },
-      "auth_token": {
-        "title": "Авторизация в ZONT",
-        "data": {
-          "token": "Токен"
         }
       }
     }

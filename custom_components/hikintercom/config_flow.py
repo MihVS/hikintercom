@@ -1,12 +1,13 @@
 import logging
 from http import HTTPStatus
 
-import aiohttp
+import httpx
+
 import voluptuous as vol
 
 from homeassistant import config_entries
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers.httpx_client import get_async_client
 from .const import DOMAIN, HTTP_URL, URL_GET_INFO
 from .core.exceptions import InvalidAuth, InvalidIP
 
@@ -18,14 +19,14 @@ async def validate_auth(
 ) -> None:
     """Валидация авторизации"""
 
-    session = async_get_clientsession(hass)
+    session = get_async_client(hass)
     response = await session.get(
         url=HTTP_URL + ip + URL_GET_INFO,
-        auth=aiohttp.BasicAuth(login, password)
+        auth=httpx.DigestAuth(login, password)
     )
-    text = await response.text()
+    text = response.text
     _LOGGER.debug(text)
-    status_code = response.status
+    status_code = response.status_code
     _LOGGER.info(status_code)
     if status_code == HTTPStatus.UNAUTHORIZED:
         error = "Неверный логин или пароль."

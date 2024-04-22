@@ -24,6 +24,8 @@ async def async_setup_entry(
 
     hass.data.setdefault(DOMAIN, {})
     hass.data[DOMAIN][entry_id] = intercom
+    await intercom.update_device_info()
+    _LOGGER.debug(intercom)
     # await hass.config_entries.async_forward_entry_setups(
     #     config_entry, PLATFORMS
     # )

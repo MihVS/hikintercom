@@ -11,4 +11,4 @@ scenes.yaml
 scripts.yaml
 secrets.yaml
 __pycache__
-/custom_components/zont_ha/temp_data/
+/custom_components/hikintercom/temp_data/

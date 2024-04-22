@@ -54,6 +54,9 @@ class HikConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 )
                 if not errors:
                     self.data = user_input
+                return self.async_create_entry(
+                    title='intercom', data=self.data
+                )
             except InvalidAuth:
                 _LOGGER.error("Не правильный логин или пароль")
                 errors['base'] = 'invalid_auth'

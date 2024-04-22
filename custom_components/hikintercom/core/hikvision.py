@@ -4,10 +4,9 @@ from http import HTTPStatus
 import httpx
 import xmltodict
 
-from homeassistant.helpers.typing import HomeAssistantType
+from homeassistant.core import HomeAssistant
 from homeassistant.helpers.httpx_client import get_async_client
-
-from .model_hikvision import BaseDeviseInfo, DeviceInfo, Status, CallStatus
+from .model_hikvision import BaseDeviseInfo, DeviceInfo, CallStatus
 from ..const import (
     HTTP_URL, URL_GET_INFO, URL_GET_STATE, URL_OPEN_DOOR, BOODY_OPEN_DOOR
 )
@@ -21,7 +20,7 @@ class Intercom:
     device_info: DeviceInfo
 
     def __init__(
-            self, hass: HomeAssistantType, ip: str, login: str, password: str
+            self, hass: HomeAssistant, ip: str, login: str, password: str
     ):
         self.ip = ip
         self.login = login

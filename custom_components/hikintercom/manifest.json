@@ -4,7 +4,7 @@
   "documentation": "https://github.com/mihvs/hikintercom",
   "codeowners": ["@mihvs"],
   "config_flow": true,
-  "integration_type": "hub",
+  "integration_type": "device",
   "dependencies": ["http", "zeroconf"],
   "requirements": [],
   "version": "0.0.0"

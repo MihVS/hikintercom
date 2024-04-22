@@ -70,8 +70,8 @@ class HikConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             step_id="user",
             data_schema=vol.Schema(
                 {
-                    vol.Required(schema="ip"): str,
-                    vol.Required(schema="login"): str,
+                    vol.Required(schema="ip", default="192.168.1.50"): str,
+                    vol.Required(schema="login", default="admin"): str,
                     vol.Required(schema="password"): str,
                     vol.Required(schema="quantity", default=1): int
                 }

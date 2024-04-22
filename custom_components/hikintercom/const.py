@@ -4,7 +4,7 @@ HTTP_URL = 'http://'
 
 URL_GET_INFO = '/ISAPI/System/deviceInfo'
 URL_GET_STATE = '/ISAPI/VideoIntercom/callStatus?format=json'
-URL_OPEN_DOOR = '/ISAPI/AccessControl/RemoteControl/door/1'
+URL_OPEN_DOOR = '/ISAPI/AccessControl/RemoteControl/door/'
 
 BOODY_OPEN_DOOR = '''
     <RemoteOpenDoor>

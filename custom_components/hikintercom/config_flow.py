@@ -72,7 +72,8 @@ class HikConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 {
                     vol.Required(schema="ip"): str,
                     vol.Required(schema="login"): str,
-                    vol.Required(schema="password"): str
+                    vol.Required(schema="password"): str,
+                    vol.Required(schema="quantity", default=1): int
                 }
             ),
             errors=errors

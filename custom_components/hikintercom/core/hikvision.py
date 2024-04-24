@@ -17,14 +17,21 @@ _LOGGER = logging.getLogger(__name__)
 class Intercom:
     """Класс видеодомофона"""
 
-    device_info: DeviceInfo
+    info: DeviceInfo
+    status: str | None
 
     def __init__(
-            self, hass: HomeAssistant, ip: str, login: str, password: str
+            self,
+            hass: HomeAssistant,
+            ip: str,
+            login: str,
+            password: str,
+            quantity: int
     ):
         self.ip = ip
         self.login = login
         self.password = password
+        self.quantity = quantity
         self.session = get_async_client(hass)
         _LOGGER.debug('Создан объект Intercom')
 
@@ -36,28 +43,29 @@ class Intercom:
         base_device_info = BaseDeviseInfo.parse_obj(
             xmltodict.parse(response.text)
         )
-        self.device_info = base_device_info.device_info
-        _LOGGER.debug(f'Обновлена инфо устройства: {self.device_info}')
+        self.info = base_device_info.device_info
+        _LOGGER.debug(f'Обновлена инфо устройства: {self.info}')
 
-    async def get_status(self) -> str:
+    async def update_status(self):
         response = await self.session.get(
             url=HTTP_URL + self.ip + URL_GET_STATE,
             auth=httpx.DigestAuth(self.login, self.password)
         )
         call_status = CallStatus.parse_obj(
-            xmltodict.parse(response.text)
+            response.json()
         )
         status = call_status.call_status.status
         _LOGGER.debug(f'Состояние вызывной: {status}')
-        return status
+        self.status = status
 
     async def open_door(self, number):
         response = await self.session.put(
-            url=HTTP_URL + self.ip + URL_OPEN_DOOR + number,
+            url=HTTP_URL + self.ip + URL_OPEN_DOOR + str(number),
             auth=httpx.DigestAuth(self.login, self.password),
             content=BOODY_OPEN_DOOR
         )
         code = response.status_code
         if code != HTTPStatus.OK:
             _LOGGER.error(f'Ошибка открытия двери: {code}')
-        _LOGGER.debug(f'Дверь №{number} открыта')
+        else:
+            _LOGGER.debug(f'Дверь №{number} открыта')

@@ -6,6 +6,8 @@ URL_GET_INFO = '/ISAPI/System/deviceInfo'
 URL_GET_STATE = '/ISAPI/VideoIntercom/callStatus?format=json'
 URL_OPEN_DOOR = '/ISAPI/AccessControl/RemoteControl/door/'
 
+CONFIGURATION_URL = 'https://www.hikvision.com'
+
 BOODY_OPEN_DOOR = '''
     <RemoteOpenDoor>
         <cmd>open</cmd>
@@ -13,9 +15,7 @@ BOODY_OPEN_DOOR = '''
 '''
 
 TIME_OUT_UPDATE_DATA = 10
-TIME_OUT_REPEAT = 10
-TIME_OUT_REQUEST = 2
-TIME_UPDATE = 10
+TIME_UPDATE = 2
 
 PLATFORMS = [
     'sensor',

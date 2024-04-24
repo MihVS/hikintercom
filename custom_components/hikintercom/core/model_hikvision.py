@@ -20,7 +20,7 @@ class DeviceInfo(BaseModel):
     encoder_version: str = Field(alias="encoderVersion")
     encoder_released: str = Field(alias="encoderReleasedDate")
     type: str = Field(alias="deviceType")
-    sub_type: str = Field(alias="subDeviceType")
+    sub_type: str = Field(alias="subDeviceType", default=None)
     telecontrol_id: int = Field(alias="telecontrolID")
     support_beep: bool = Field(alias="supportBeep")
     support_video_loss: bool = Field(alias="supportVideoLoss")

@@ -24,10 +24,7 @@ async def validate_auth(
         url=HTTP_URL + ip + URL_GET_INFO,
         auth=httpx.DigestAuth(login, password)
     )
-    text = response.text
-    _LOGGER.debug(text)
     status_code = response.status_code
-    _LOGGER.info(status_code)
     if status_code == HTTPStatus.UNAUTHORIZED:
         error = "Неверный логин или пароль."
         hass.data['error'] = error

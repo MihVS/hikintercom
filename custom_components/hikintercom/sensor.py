@@ -28,11 +28,11 @@ async def async_setup_entry(
 class StatusIntercom(CoordinatorEntity, SensorEntity):
 
     _attr_icon = 'mdi:bell'
-    options = []
 
     def __init__(self, coordinator: HikCoordinator,) -> None:
         super().__init__(coordinator)
-        self._unique_id = f'{coordinator.intercom.info.id}-status'
+        self.coordinator = coordinator
+        self._attr_device_info = coordinator.devices_info()
 
     def convert_status(self, status: str) -> str:
         match status:
@@ -70,7 +70,3 @@ class StatusIntercom(CoordinatorEntity, SensorEntity):
         if not self.hass:
             return f"<Sensor entity {self.name}>"
         return super().__repr__()
-
-    @property
-    def device_info(self):
-        return {"identifiers": {(DOMAIN, self.coordinator.intercom.info.id)}}

@@ -31,6 +31,8 @@ async def async_setup_entry(
 
 class OpenButton(ButtonEntity):
 
+    _attr_icon = 'mdi:doorbell-video'
+
     def __init__(
             self,  intercom: Intercom, number: int, unique_id: str
     ) -> None:
